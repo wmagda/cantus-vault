@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <base target="_top">
+  <?!= include('Stylesheet') ?>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Biblioteka Nutowa</h1>
+      <p class="subtitle">Divine Mercy Church</p>
+    </header>
+
+    <div class="search-box">
+      <input
+        type="search"
+        id="searchInput"
+        placeholder="Szukaj utworu, kompozytora, okresu..."
+        autocomplete="off"
+      >
+    </div>
+
+    <div id="songCount" class="song-count"></div>
+
+    <div id="loading" class="loading">
+      <div class="spinner"></div>
+      <p>Wczytywanie biblioteki...</p>
+    </div>
+
+    <div id="songList" class="song-list"></div>
+
+    <div id="noResults" class="no-results" style="display:none">
+      <p>Brak wyników dla tego wyszukiwania.</p>
+    </div>
+  </div>
+
+  <?!= include('JavaScript') ?>
+</body>
+</html>

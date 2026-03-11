@@ -1,0 +1,18 @@
+{
+  "name": "cantus-vault",
+  "version": "1.0.0",
+  "description": "Polish Choir Sheet Music Library — Google Apps Script project for Divine Mercy Church",
+  "private": true,
+  "scripts": {
+    "build": "tsc && npm run copy-assets",
+    "copy-assets": "cp src/*.html src/appsscript.json build/",
+    "push": "npm run build && clasp push",
+    "deploy": "npm run push && clasp deploy",
+    "watch": "tsc --watch"
+  },
+  "devDependencies": {
+    "@google/clasp": "^3.2.0",
+    "@types/google-apps-script": "^1.0.83",
+    "typescript": "^5.7.0"
+  }
+}

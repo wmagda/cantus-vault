@@ -1,0 +1,109 @@
+<script>
+  (function () {
+    var allSongs = [];
+
+    google.script.run
+      .withSuccessHandler(onDataLoaded)
+      .withFailureHandler(onError)
+      .getData();
+
+    document.getElementById('searchInput').addEventListener('input', function () {
+      filterSongs(this.value);
+    });
+
+    function onDataLoaded(songs) {
+      allSongs = songs || [];
+      document.getElementById('loading').style.display = 'none';
+      renderSongs(allSongs);
+      updateCount(allSongs.length);
+    }
+
+    function onError(err) {
+      document.getElementById('loading').innerHTML =
+        '<p>Nie udało się wczytać danych. Spróbuj odświeżyć stronę.</p>';
+      console.error(err);
+    }
+
+    function normalize(str) {
+      return str
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+    }
+
+    function filterSongs(query) {
+      var q = normalize(query.trim());
+      if (!q) {
+        renderSongs(allSongs);
+        updateCount(allSongs.length);
+        return;
+      }
+
+      var filtered = allSongs.filter(function (song) {
+        return (
+          normalize(song.title).indexOf(q) !== -1 ||
+          normalize(song.composer).indexOf(q) !== -1 ||
+          normalize(song.season).indexOf(q) !== -1
+        );
+      });
+
+      renderSongs(filtered);
+      updateCount(filtered.length);
+    }
+
+    function updateCount(count) {
+      var el = document.getElementById('songCount');
+      if (allSongs.length === 0) {
+        el.textContent = '';
+        return;
+      }
+      el.textContent = count + ' z ' + allSongs.length + ' utworów';
+    }
+
+    function renderSongs(songs) {
+      var list = document.getElementById('songList');
+      var noResults = document.getElementById('noResults');
+
+      if (songs.length === 0 && allSongs.length > 0) {
+        list.innerHTML = '';
+        noResults.style.display = 'block';
+        return;
+      }
+
+      noResults.style.display = 'none';
+      var html = '';
+
+      for (var i = 0; i < songs.length; i++) {
+        var song = songs[i];
+        var metaParts = [];
+        if (song.composer) metaParts.push('<span>' + escapeHtml(song.composer) + '</span>');
+        if (song.season) metaParts.push('<span>' + escapeHtml(song.season) + '</span>');
+        if (song.language) metaParts.push('<span>' + escapeHtml(song.language) + '</span>');
+
+        var btnHtml = song.pdfLink
+          ? '<a class="open-btn" href="' + escapeHtml(song.pdfLink) + '" target="_blank" rel="noopener">Otwórz</a>'
+          : '<span class="open-btn" style="background:#d2d2d7;cursor:default">Brak PDF</span>';
+
+        html +=
+          '<div class="song-card">' +
+            '<div class="song-info">' +
+              '<div class="song-title">' + escapeHtml(song.title) + '</div>' +
+              '<div class="song-meta">' + metaParts.join('') + '</div>' +
+            '</div>' +
+            btnHtml +
+          '</div>';
+      }
+
+      list.innerHTML = html;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+  })();
+</script>
