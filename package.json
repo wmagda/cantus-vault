@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc && npm run copy-assets",
     "copy-assets": "cp src/*.html src/appsscript.json build/",
-    "push": "npm run build && clasp push",
+    "push": "npm run build && clasp push --force",
     "deploy": "npm run push && clasp deploy",
     "watch": "tsc --watch"
   },
